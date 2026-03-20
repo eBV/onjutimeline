@@ -5,6 +5,9 @@ import {
   IPFS_CID_MINT_PLACEHOLDER,
   GATEWAYS,
   getNFTImage,
+  SOCIAL_LINKS,
+  TWITCH_CHANNEL,
+  YOUTUBE_PLAYLIST_ID,
 } from '../lib/constants'
 
 describe('constants', () => {
@@ -41,5 +44,26 @@ describe('constants', () => {
 
   test('getNFTImage uses the first gateway', () => {
     expect(getNFTImage(42)).toContain(GATEWAYS[0])
+  })
+
+  test('SOCIAL_LINKS contains all required platforms', () => {
+    expect(SOCIAL_LINKS.discord).toContain('discord')
+    expect(SOCIAL_LINKS.twitter).toContain('twitter')
+    expect(SOCIAL_LINKS.instagram).toContain('instagram')
+    expect(SOCIAL_LINKS.youtube).toContain('youtube')
+    expect(SOCIAL_LINKS.opensea).toContain('opensea')
+    expect(SOCIAL_LINKS.etherscan).toContain(CONTRACT_ADDRESS)
+    expect(SOCIAL_LINKS.twitch).toContain('twitch')
+  })
+
+  test('SOCIAL_LINKS URLs are valid https URLs', () => {
+    for (const url of Object.values(SOCIAL_LINKS)) {
+      expect(url).toMatch(/^https:\/\//)
+    }
+  })
+
+  test('streaming constants are defined', () => {
+    expect(TWITCH_CHANNEL).toBe('ohnahji')
+    expect(YOUTUBE_PLAYLIST_ID.length).toBeGreaterThan(0)
   })
 })

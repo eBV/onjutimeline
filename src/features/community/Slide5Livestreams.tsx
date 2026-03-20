@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { SOCIAL_LINKS, TWITCH_CHANNEL, YOUTUBE_PLAYLIST_ID } from '../../lib/constants'
 
 const Slide5Livestreams = () => {
   const [activeTab, setActiveTab] = useState<'twitch' | 'youtube'>('twitch')
@@ -54,7 +55,7 @@ const Slide5Livestreams = () => {
         >
           {activeTab === 'twitch' ? (
             <iframe
-              src={`https://player.twitch.tv/?channel=ohnahji&parent=${window.location.hostname}&muted=true`}
+              src={`https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${window.location.hostname}&muted=true`}
               style={{ border: 'none' }}
               allowFullScreen
               title="Twitch Stream"
@@ -62,7 +63,7 @@ const Slide5Livestreams = () => {
             />
           ) : (
             <iframe
-              src="https://www.youtube.com/embed/videoseries?list=PLvmAix5Xj5Hk2rYwg2T0H-eMXdDbqSMH9"
+              src={`https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}`}
               style={{ border: 'none' }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -73,7 +74,7 @@ const Slide5Livestreams = () => {
         </motion.div>
 
         <p className="text-center text-ohnahji-white font-bold mt-4 font-sans">
-          {activeTab === 'twitch' ? 'twitch.tv/ohnahji' : 'youtube.com/@ohnahji/streams'}
+          {activeTab === 'twitch' ? SOCIAL_LINKS.twitch.replace('https://', '') : SOCIAL_LINKS.youtube.replace('https://', '') + '/streams'}
         </p>
       </div>
     </div>

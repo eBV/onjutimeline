@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { SOCIAL_LINKS } from '../../lib/constants'
 
 const Slide3HBCU = () => {
   return (
@@ -38,7 +39,7 @@ const Slide3HBCU = () => {
               </div>
             </div>
             <a
-              href="https://discord.com/invite/3ahyqHkhc7"
+              href={SOCIAL_LINKS.discordCampus}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-3 bg-indigo-600 text-white text-center border-[6px] border-ohnahji-black shadow-neo rounded-2xl font-black text-xl hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-neo-active transition-all font-sans"

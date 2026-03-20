@@ -12,3 +12,19 @@ export const GATEWAYS = [
 ]
 
 export const getNFTImage = (tokenId: number): string => `${GATEWAYS[0]}/${tokenId}.png`
+
+// Social & Community Links
+export const SOCIAL_LINKS = {
+  discord: 'https://discord.gg/ohnahji',
+  discordCampus: 'https://discord.com/invite/3ahyqHkhc7',
+  twitter: 'https://twitter.com/ohnahji',
+  instagram: 'https://instagram.com/ohnahji',
+  youtube: 'https://youtube.com/@ohnahji',
+  opensea: 'https://opensea.io/collection/ohnahji',
+  etherscan: `https://etherscan.io/address/${CONTRACT_ADDRESS}`,
+  twitch: 'https://twitch.tv/ohnahji',
+} as const
+
+// Streaming Embed URLs
+export const YOUTUBE_PLAYLIST_ID = 'PLvmAix5Xj5Hk2rYwg2T0H-eMXdDbqSMH9'
+export const TWITCH_CHANNEL = 'ohnahji'

@@ -1,18 +1,18 @@
 import { motion } from 'framer-motion'
 import { Twitter, Instagram, MessageCircle, Youtube } from 'lucide-react'
-import { CONTRACT_ADDRESS } from '../../lib/constants'
+import { SOCIAL_LINKS } from '../../lib/constants'
 
 const Slide6Socials = () => {
   const web2Socials = [
-    { name: 'Discord', link: 'https://discord.gg/ohnahji', icon: <MessageCircle size={32} />, color: 'bg-[#5865F2]' },
-    { name: 'Twitter', link: 'https://twitter.com/ohnahji', icon: <Twitter size={32} />, color: 'bg-[#1DA1F2]' },
-    { name: 'Instagram', link: 'https://instagram.com/ohnahji', icon: <Instagram size={32} />, color: 'bg-[#E1306C]' },
-    { name: 'YouTube', link: 'https://youtube.com/@ohnahji', icon: <Youtube size={32} />, color: 'bg-[#FF0000]' },
+    { name: 'Discord', link: SOCIAL_LINKS.discord, icon: <MessageCircle size={32} />, color: 'bg-[#5865F2]' },
+    { name: 'Twitter', link: SOCIAL_LINKS.twitter, icon: <Twitter size={32} />, color: 'bg-[#1DA1F2]' },
+    { name: 'Instagram', link: SOCIAL_LINKS.instagram, icon: <Instagram size={32} />, color: 'bg-[#E1306C]' },
+    { name: 'YouTube', link: SOCIAL_LINKS.youtube, icon: <Youtube size={32} />, color: 'bg-[#FF0000]' },
   ]
 
   const web3Socials = [
-    { name: 'OpenSea', link: 'https://opensea.io/collection/ohnahji', icon: '🌊', color: 'bg-[#2081E2]' },
-    { name: 'Etherscan', link: `https://etherscan.io/address/${CONTRACT_ADDRESS}`, icon: '🔍', color: 'bg-[#21325E]' },
+    { name: 'OpenSea', link: SOCIAL_LINKS.opensea, icon: '🌊', color: 'bg-[#2081E2]' },
+    { name: 'Etherscan', link: SOCIAL_LINKS.etherscan, icon: '🔍', color: 'bg-[#21325E]' },
   ]
 
   return (
@@ -62,7 +62,7 @@ const Slide6Socials = () => {
                 <p className="font-bold text-ohnahji-white/80 font-sans">Get exclusive access to our private community and events.</p>
               </div>
               <a
-                href="https://discord.gg/ohnahji"
+                href={SOCIAL_LINKS.discord}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-4 bg-ohnahji-pink text-white border-[6px] border-ohnahji-black shadow-neo hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-neo-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-neo-active transition-all text-center font-black text-xl rounded-2xl font-sans neo-button-flood"

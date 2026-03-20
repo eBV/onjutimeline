@@ -41,7 +41,7 @@ const NFTGallery = ({ totalSupply, onClose }: NFTGalleryProps) => {
       return
     }
     if (num > maxToken) {
-      setSearchError(`Max token is #${maxToken}`)
+      setSearchError(`Token must be between #1 and #${maxToken}`)
       return
     }
     setSearchError('')

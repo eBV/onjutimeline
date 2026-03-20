@@ -6,12 +6,12 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { CONTRACT_ADDRESS } from '../lib/constants'
 
 // Constants
-const CLIENT_ID = '09797204fc3d09a0636257d079ebcb80'
+const CLIENT_ID = import.meta.env.VITE_THIRDWEB_CLIENT_ID || '09797204fc3d09a0636257d079ebcb80'
 
 // Types
 interface StoreContextType {
-  client: any
-  chain: any
+  client: ReturnType<typeof createThirdwebClient>
+  chain: ReturnType<typeof defineChain>
   totalSupply: number
   currentSlide: number
   isGalleryOpen: boolean
