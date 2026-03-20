@@ -14,6 +14,7 @@ interface UseSlideScrollResult {
 }
 
 const SCROLL_COOLDOWN = 1000
+const PROGRAMMATIC_SCROLL_DURATION = 600
 
 export function useSlideScroll({
   slidePaths,
@@ -24,8 +25,25 @@ export function useSlideScroll({
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollProgress = useMotionValue(0)
   const lastScrollTime = useRef(0)
-  // Prevents handleScroll from counter-navigating during a programmatic smooth scroll
   const isProgrammaticScroll = useRef(false)
+  const programmaticScrollTimeoutRef = useRef<number | null>(null)
+
+  const lockProgrammaticScroll = useCallback(() => {
+    isProgrammaticScroll.current = true
+    if (programmaticScrollTimeoutRef.current !== null) {
+      window.clearTimeout(programmaticScrollTimeoutRef.current)
+    }
+    programmaticScrollTimeoutRef.current = window.setTimeout(() => {
+      isProgrammaticScroll.current = false
+      programmaticScrollTimeoutRef.current = null
+    }, PROGRAMMATIC_SCROLL_DURATION)
+  }, [])
+
+  const navigateToSlide = useCallback((index: number) => {
+    if (!slidePaths[index] || index === currentSlide) return
+    lockProgrammaticScroll()
+    navigate(slidePaths[index])
+  }, [currentSlide, lockProgrammaticScroll, navigate, slidePaths])
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return
@@ -46,12 +64,17 @@ export function useSlideScroll({
     if (!containerRef.current) return
     const { scrollLeft, clientWidth } = containerRef.current
     const targetLeft = clientWidth * index
-    // If already at the target (e.g. CSS snap just got there), skip
-    if (Math.abs(scrollLeft - targetLeft) < 10) return
-    isProgrammaticScroll.current = true
+    if (Math.abs(scrollLeft - targetLeft) < 10) {
+      isProgrammaticScroll.current = false
+      if (programmaticScrollTimeoutRef.current !== null) {
+        window.clearTimeout(programmaticScrollTimeoutRef.current)
+        programmaticScrollTimeoutRef.current = null
+      }
+      return
+    }
+    lockProgrammaticScroll()
     containerRef.current.scrollTo({ left: targetLeft, behavior: 'smooth' })
-    setTimeout(() => { isProgrammaticScroll.current = false }, 600)
-  }, [])
+  }, [lockProgrammaticScroll])
 
   useEffect(() => {
     scrollToSlide(currentSlide)
@@ -70,34 +93,75 @@ export function useSlideScroll({
         if (scrollable) {
           const atTop = scrollable.scrollTop <= 0
           const atBottom = scrollable.scrollHeight - scrollable.scrollTop <= scrollable.clientHeight + 1
-          if (e.deltaY > 0 && !atBottom) return
-          if (e.deltaY < 0 && !atTop) return
+          const dominantDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+
+          if (dominantDelta > 0 && !atBottom) return
+          if (dominantDelta < 0 && !atTop) return
         }
       }
 
-      e.preventDefault()
       const now = Date.now()
-      if (now - lastScrollTime.current < SCROLL_COOLDOWN) return
+      if (now - lastScrollTime.current < SCROLL_COOLDOWN) {
+        e.preventDefault()
+        return
+      }
 
+      const dominantDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
       const sensitivity = currentSlide === 0 ? 10 : 20
-      if (Math.abs(e.deltaY) < sensitivity) return
+      if (Math.abs(dominantDelta) < sensitivity) return
 
-      if (e.deltaY > 0 && currentSlide < slidePaths.length - 1) {
-        navigate(slidePaths[currentSlide + 1])
+      if (dominantDelta > 0 && currentSlide < slidePaths.length - 1) {
+        e.preventDefault()
+        navigateToSlide(currentSlide + 1)
         lastScrollTime.current = now
-      } else if (e.deltaY < 0 && currentSlide > 0) {
-        navigate(slidePaths[currentSlide - 1])
+      } else if (dominantDelta < 0 && currentSlide > 0) {
+        e.preventDefault()
+        navigateToSlide(currentSlide - 1)
         lastScrollTime.current = now
+      }
+    }
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isGalleryOpen) return
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.repeat) {
+        e.preventDefault()
+        return
+      }
+
+      const target = e.target as HTMLElement | null
+      if (target) {
+        const tagName = target.tagName
+        const isEditable = target.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT'
+        if (isEditable) return
+      }
+
+      if (e.key === 'ArrowRight' && currentSlide < slidePaths.length - 1) {
+        e.preventDefault()
+        navigateToSlide(currentSlide + 1)
+      } else if (e.key === 'ArrowLeft' && currentSlide > 0) {
+        e.preventDefault()
+        navigateToSlide(currentSlide - 1)
       }
     }
 
     container.addEventListener('wheel', onWheel, { passive: false })
     container.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('keydown', onKeyDown)
     return () => {
       container.removeEventListener('wheel', onWheel)
       container.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('keydown', onKeyDown)
     }
-  }, [handleScroll, currentSlide, navigate, isGalleryOpen, slidePaths])
+  }, [currentSlide, handleScroll, isGalleryOpen, navigateToSlide, slidePaths.length])
+
+  useEffect(() => {
+    return () => {
+      if (programmaticScrollTimeoutRef.current !== null) {
+        window.clearTimeout(programmaticScrollTimeoutRef.current)
+      }
+    }
+  }, [])
 
   return { containerRef, scrollProgress }
 }
